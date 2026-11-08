@@ -1,6 +1,6 @@
 # 图文社区
 
-个人开发的多端图文社区。当前阶段为工程基础：uni-app H5、NestJS API、Vue 管理后台、共享接口契约、PostgreSQL 迁移和自动化检查；账号、发布、互动与审核业务尚未实现。当前页面用于确认客户端到服务端及数据库的真实连接。
+个人开发的多端图文社区。已建立 uni-app H5、NestJS API、Vue 管理后台、共享接口契约、PostgreSQL 迁移和自动化检查，并实现 H5 邮箱密码注册、登录、退出及会话校验。个人资料编辑、发布、互动与审核业务后续实现。
 
 需求与后续阶段见 [第一版需求](docs/mvp-requirements.md) 和 [页面与验收流程](docs/mvp-flows.md)。
 
@@ -74,7 +74,7 @@ pnpm exec playwright install chromium
 pnpm test:e2e
 ```
 
-浏览器测试分别验证移动尺寸 H5 和桌面后台：连接真实 API/数据库、服务故障提示、重试恢复和水平溢出。集成测试使用迁移后的本地数据库，仅查询版本记录，不清空数据。CI 使用独立 PostgreSQL 服务，运行相同检查。CI 配置已提供，远程运行结果需推送后查看。
+浏览器测试分别验证移动尺寸 H5 和桌面后台：连接真实 API/数据库、服务故障提示、重试恢复、注册登录、刷新保持会话、退出撤销及独立浏览器会话。集成与浏览器测试创建随机邮箱账号，结束时只清理本次创建的记录，不清空数据库；建议在独立开发或测试数据库运行。CI 使用独立 PostgreSQL 服务，运行相同检查。CI 配置已提供，远程运行结果需推送后查看。
 
 ## 仓库结构
 
@@ -96,6 +96,6 @@ docs               需求与页面流程
 - Compose 仅提供本地数据库，不是生产部署配置。`docker compose down` 停止服务并保留卷；不要用删除卷命令处理需要保留的数据。
 - `pnpm build` 生成 H5 `apps/client/dist/build/h5`、后台 `apps/admin/dist` 和 API `apps/api/dist`。API 从 `apps/api` 目录执行 `pnpm start`，使用该目录的环境文件或进程环境变量。
 - 生产环境应配置 HTTPS、受控数据库和备份，并将静态站点的 `/api` 转发到 API；修改 `VITE_API_BASE_URL` 后需重新构建。`VITE_*` 会被打包公开，不能存储凭据。管理后台目前只是公开的连接检查页面，尚未提供管理员认证或敏感接口。
-- 前端只有连接检查页面；数据库目前只有基础版本表，用户和内容模型随对应功能建立，避免提前锁定业务设计。
+- 前端从发现页点击「我的」进入登录注册；数据库包含基础版本、用户与会话表。认证接口和配置见 [注册登录说明](docs/auth.md)。
 
 uni-app 依赖参考 [DCloud 官方 CLI 模板](https://uniapp.dcloud.io/quickstart-cli)，Vue、Vite 和 DCloud 类型包按其声明的版本固定，升级时需要一起验证；Prisma 固定 7.10.1，避免当前 latest 指向的 8.x 预发布版本。[Prisma 配置说明](https://docs.prisma.io/docs/orm/reference/prisma-config-reference)

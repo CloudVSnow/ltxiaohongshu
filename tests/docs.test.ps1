@@ -6,9 +6,10 @@ $requirements = Get-Content -LiteralPath $requirementsPath -Raw -Encoding utf8
 $flows = Get-Content -LiteralPath $flowsPath -Raw -Encoding utf8
 
 # Prevent broken local references as planning documents evolve.
-foreach ($documentPath in @($requirementsPath, $flowsPath)) {
+foreach ($documentPath in @($requirementsPath, $flowsPath, (Join-Path $root 'docs/auth.md'), (Join-Path $root 'README.md'))) {
     $content = Get-Content -LiteralPath $documentPath -Raw -Encoding utf8
     foreach ($link in [regex]::Matches($content, '\]\(([^)#]+)(?:#[^)]*)?\)')) {
+        if ($link.Groups[1].Value -match '^https?://') { continue }
         $target = Join-Path (Split-Path $documentPath -Parent) $link.Groups[1].Value
         if (-not (Test-Path -LiteralPath $target -PathType Leaf)) {
             throw "Broken document link: $target"

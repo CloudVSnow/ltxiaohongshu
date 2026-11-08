@@ -7,7 +7,7 @@ export async function createApp() {
   const config = readConfig();
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
-  app.enableCors({ origin: config.origins });
+  app.enableCors({ origin: config.origins, credentials: true });
   app.enableShutdownHooks();
   return app;
 }

@@ -11,11 +11,13 @@ async function refresh() {
   catch { status.value = 'error'; }
 }
 let started = false;
+function openAccount() { uni.navigateTo({ url: '/pages/me/index' }); }
 onMounted(refresh);
 </script>
 <template>
   <view class="page">
     <text class="eyebrow">分享日常 · 发现灵感</text>
+    <button role="button" class="account" @click="openAccount">我的</button>
     <text class="title">让生活里的好，
 被更多人看见。</text>
     <view class="card">
@@ -32,6 +34,7 @@ onMounted(refresh);
 </template>
 <style scoped>
 .page { max-width: 720px; margin: 0 auto; padding: 64rpx 40rpx; }
+.account { float: right; margin-top: -40rpx; font-size: 26rpx; background: transparent; color: #8c4536; }
 .eyebrow { display: block; color: #a35d49; font-size: 26rpx; letter-spacing: 3rpx; }
 .title { display: block; margin: 30rpx 0 64rpx; font-size: 58rpx; line-height: 1.45; font-weight: 700; white-space: pre-line; }
 .card { background: #fff; border-radius: 28rpx; padding: 40rpx; border: 1px solid #eee7df; }
