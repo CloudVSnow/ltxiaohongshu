@@ -21,3 +21,4 @@ allowBuilds:
   'embedded-postgres': true
   'esbuild': true
   'prisma': true
+  '@scarf/scarf': false

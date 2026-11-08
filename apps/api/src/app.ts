@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { readConfig } from './config';
 import type { Request, Response, NextFunction } from 'express';
+import { setupOpenApi } from './openapi/setup';
 
 export async function createApp() {
   const config = readConfig();
@@ -11,5 +12,6 @@ export async function createApp() {
   app.use('/api/auth', (_request: Request, response: Response, next: NextFunction) => { response.setHeader('Cache-Control', 'no-store'); next(); });
   app.enableCors({ origin: config.origins, credentials: true });
   app.enableShutdownHooks();
+  if (config.swaggerEnabled) setupOpenApi(app);
   return app;
 }

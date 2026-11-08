@@ -5,6 +5,7 @@
   "packageManager": "pnpm@11.25.0",
   "engines": { "node": ">=24 <25" },
   "scripts": {
+    "docs:export": "pnpm --filter @lt/contracts build && pnpm db:generate && pnpm --filter @lt/api docs:export",
     "dev": "pnpm --filter @lt/contracts build && pnpm db:generate && pnpm --parallel --filter @lt/client --filter @lt/api --filter @lt/admin dev",
     "dev:client": "pnpm --filter @lt/client dev",
     "dev:api": "pnpm --filter @lt/api dev",

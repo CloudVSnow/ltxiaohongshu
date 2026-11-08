@@ -9,5 +9,10 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env) {
   if (!origins.length || origins.some(origin => new URL(origin).origin !== origin || !/^https?:/.test(origin))) {
     throw new Error('CORS_ORIGINS must list exact HTTP origins');
   }
-  return { databaseUrl, port, host: env.HOST ?? '127.0.0.1', origins };
+  const swaggerSetting = env.SWAGGER_ENABLED ?? (env.NODE_ENV === 'production' ? 'false' : 'true');
+  if (!['true', 'false'].includes(swaggerSetting)) throw new Error('SWAGGER_ENABLED must be true or false');
+  const swaggerEnabled = swaggerSetting === 'true';
+  // Only local development Swagger gets implicit write access; production uses the explicit allowlist.
+  const swaggerOrigins = swaggerEnabled && env.NODE_ENV !== 'production' ? [`http://127.0.0.1:${port}`, `http://localhost:${port}`] : [];
+  return { databaseUrl, port, host: env.HOST ?? '127.0.0.1', origins, swaggerEnabled, authOrigins: [...new Set([...origins, ...swaggerOrigins])] };
 }

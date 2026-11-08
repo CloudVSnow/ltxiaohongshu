@@ -52,10 +52,14 @@ pnpm dev
 | 管理后台 | http://127.0.0.1:5174 |
 | 进程健康检查 | http://127.0.0.1:3000/api/health |
 | 数据库就绪检查 | http://127.0.0.1:3000/api/ready |
+| Swagger 接口文档 | http://127.0.0.1:3000/api/docs |
+| OpenAPI JSON | http://127.0.0.1:3000/api/docs-json |
 
 健康检查不依赖数据库。就绪检查会通过 Prisma 查询迁移建立的版本记录，数据库断开或迁移缺失时返回 503，客户端显示可重试提示。应用通过各自开发服务器的 `/api` 代理访问后端，避免把本机 API 地址写死在客户端。
 
 单独启动可以使用 `pnpm dev:api`、`pnpm dev:client`、`pnpm dev:admin`；请先执行 `pnpm --filter @lt/contracts build` 和 `pnpm db:generate`。共享契约修改后需重新构建，并重启对应应用。
+
+接口在线调试、Cookie 登录、生产开关与 SwaggerHub 导入见 [Swagger / OpenAPI 文档](docs/openapi.md)。运行 `pnpm docs:export` 可导出 `apps/api/dist/openapi.json`；本地文档无需账号或 API Key。
 
 ## 验证
 

@@ -10,6 +10,8 @@
 
 ## 接口
 
+可直接打开 [本地 Swagger](http://127.0.0.1:3000/api/docs) 查看完整结构和在线调试；使用说明及导出方法见 [OpenAPI 文档](openapi.md)。
+
 | 方法与路径 | 请求 | 成功结果 |
 | --- | --- | --- |
 | POST /api/auth/register | JSON：email、password | 201，设置 Cookie，返回本人账号 |

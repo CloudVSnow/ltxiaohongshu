@@ -8,7 +8,7 @@ export class AuthWriteGuard implements CanActivate {
   private readonly attempts = new Map<string, { count: number; expires: number }>();
   canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest<Request>();
-    if (!readConfig().origins.includes(request.headers.origin ?? '')) throw new ForbiddenException('请求来源不受信任');
+    if (!readConfig().authOrigins.includes(request.headers.origin ?? '')) throw new ForbiddenException('请求来源不受信任');
     if (request.path.endsWith('/logout')) return true;
     const now = Date.now();
     for (const [key, entry] of this.attempts) if (entry.expires <= now) this.attempts.delete(key);

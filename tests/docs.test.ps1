@@ -16,7 +16,7 @@ if ($approvalRule.Count -ne 1 -or $approvalRule[0].Groups[3].Value -notmatch 'å†
 }
 
 # Prevent broken local references as planning documents evolve.
-foreach ($documentPath in @($requirementsPath, $flowsPath, (Join-Path $root 'docs/auth.md'), (Join-Path $root 'README.md'))) {
+foreach ($documentPath in @($requirementsPath, $flowsPath, (Join-Path $root 'docs/auth.md'), (Join-Path $root 'docs/openapi.md'), (Join-Path $root 'README.md'))) {
     $content = Get-Content -LiteralPath $documentPath -Raw -Encoding utf8
     foreach ($link in [regex]::Matches($content, '\]\(([^)#]+)(?:#[^)]*)?\)')) {
         if ($link.Groups[1].Value -match '^https?://') { continue }
