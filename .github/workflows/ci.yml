@@ -1,0 +1,36 @@
+name: 工程验证
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18.4
+        env:
+          POSTGRES_USER: lt
+          POSTGRES_PASSWORD: local_dev_only
+          POSTGRES_DB: ltcommunity
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U lt -d ltcommunity"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://lt:local_dev_only@127.0.0.1:5432/ltcommunity?schema=public
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm verify
+      - run: pnpm db:migrate
+      - run: pnpm db:migrate
+      - run: pnpm test:integration
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:e2e

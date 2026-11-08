@@ -1,0 +1,4 @@
+{
+  "pages": [ { "path": "pages/discover/index", "style": { "navigationBarTitleText": "图文社区" } } ],
+  "globalStyle": { "navigationBarTextStyle": "black", "navigationBarBackgroundColor": "#faf8f5", "backgroundColor": "#faf8f5" }
+}

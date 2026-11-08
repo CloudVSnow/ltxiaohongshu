@@ -1,0 +1,34 @@
+{
+  "name": "ltxiaohongshu",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.25.0",
+  "engines": { "node": ">=24 <25" },
+  "scripts": {
+    "dev": "pnpm --filter @lt/contracts build && pnpm db:generate && pnpm --parallel --filter @lt/client --filter @lt/api --filter @lt/admin dev",
+    "dev:client": "pnpm --filter @lt/client dev",
+    "dev:api": "pnpm --filter @lt/api dev",
+    "dev:admin": "pnpm --filter @lt/admin dev",
+    "db:generate": "pnpm --filter @lt/api db:generate",
+    "db:migrate": "pnpm --filter @lt/api db:migrate",
+    "db:dev": "node scripts/local-db.mjs",
+    "build": "pnpm db:generate && pnpm -r build",
+    "typecheck": "pnpm --filter @lt/contracts build && pnpm db:generate && pnpm -r typecheck",
+    "lint": "eslint apps packages scripts tests/e2e playwright.config.ts",
+    "test": "pnpm --filter @lt/contracts build && pnpm db:generate && pnpm -r test && pnpm test:repo",
+    "test:repo": "pwsh -NoProfile -File tests/docs.test.ps1 && pwsh -NoProfile -File tests/gitignore.test.ps1",
+    "test:integration": "pnpm --filter @lt/api test:integration",
+    "test:e2e": "playwright test",
+    "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^24.10.0",
+    "embedded-postgres": "18.4.0-beta.17",
+    "eslint": "^9.39.0",
+    "eslint-plugin-vue": "^10.5.1",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.46.3"
+  }
+}

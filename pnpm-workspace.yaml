@@ -1,0 +1,23 @@
+packages:
+  - apps/*
+  - packages/*
+overrides:
+  # uni-app pins Vue 3.4; auto-import's optional peer must use a compatible VueUse.
+  'unplugin-auto-import>@vueuse/core': 12.8.2
+allowBuilds:
+  '@embedded-postgres/windows-x64': true
+  '@embedded-postgres/linux-x64': true
+  '@embedded-postgres/linux-arm64': true
+  '@embedded-postgres/linux-arm': true
+  '@embedded-postgres/linux-ia32': true
+  '@embedded-postgres/linux-ppc64': true
+  '@embedded-postgres/darwin-x64': true
+  '@embedded-postgres/darwin-arm64': true
+  '@nestjs/core': false
+  '@parcel/watcher': true
+  '@prisma/engines': true
+  core-js: false
+  core-js-pure: false
+  'embedded-postgres': true
+  'esbuild': true
+  'prisma': true

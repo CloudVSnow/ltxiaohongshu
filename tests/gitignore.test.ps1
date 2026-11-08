@@ -27,7 +27,8 @@ try {
         '.idea/workspace.xml',
         '.vscode/local.json',
         'apps/web/.DS_Store',
-        'Thumbs.db'
+        'Thumbs.db',
+        'apps/api/src/generated/prisma/client.ts'
     )
     $tracked = @(
         'AGENTS.md', 'LICENSE', '.gitignore',
@@ -42,7 +43,10 @@ try {
         '.vscode/extensions.json', '.vscode/settings.json',
         '.vscode/tasks.json', '.vscode/launch.json',
         'apps/api/src/uploads/controller.ts',
-        'tests/gitignore.test.ps1'
+        'tests/gitignore.test.ps1',
+        'apps/api/prisma/migrations/202611080001_foundation/migration.sql',
+        'compose.yaml',
+        '.github/workflows/ci.yml'
     )
     foreach ($case in @(
         @{ Paths = $ignored; Expected = 0; Label = 'ignored' },
