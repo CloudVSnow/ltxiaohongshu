@@ -5,6 +5,16 @@ $flowsPath = Join-Path $root 'docs/mvp-flows.md'
 $requirements = Get-Content -LiteralPath $requirementsPath -Raw -Encoding utf8
 $flows = Get-Content -LiteralPath $flowsPath -Raw -Encoding utf8
 
+# Validate the collaboration policy's structure and explicit pre-coding approval requirement.
+$policy = Get-Content -LiteralPath (Join-Path $root 'AGENTS.md') -Raw -Encoding utf8
+$rules = [regex]::Matches($policy, '(?ms)^### (\d+)\. ([^\r\n]+)\r?\n(.*?)(?=^### |^## |\z)')
+$ruleIds = @($rules | ForEach-Object { $_.Groups[1].Value })
+if (($ruleIds | Select-Object -Unique).Count -ne $ruleIds.Count) { throw 'Duplicate policy rule number' }
+$approvalRule = @($rules | Where-Object { $_.Groups[1].Value -eq '3' })
+if ($approvalRule.Count -ne 1 -or $approvalRule[0].Groups[3].Value -notmatch '写代码之前' -or $approvalRule[0].Groups[3].Value -notmatch '等待用户明确同意后' -or $approvalRule[0].Groups[3].Value -notmatch '重新说明并征得用户同意') {
+    throw 'Missing pre-coding approval policy or scope-change approval requirement'
+}
+
 # Prevent broken local references as planning documents evolve.
 foreach ($documentPath in @($requirementsPath, $flowsPath, (Join-Path $root 'docs/auth.md'), (Join-Path $root 'README.md'))) {
     $content = Get-Content -LiteralPath $documentPath -Raw -Encoding utf8
