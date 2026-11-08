@@ -29,7 +29,7 @@ test('real auth lifecycle: validation, session rotation, revocation, expiration 
     const cookie = header.split(';')[0];
     const result = await registration.json();
     assert.deepEqual(Object.keys(result), ['user']);
-    assert.deepEqual(Object.keys(result.user).sort(), ['email', 'id', 'nickname']);
+    assert.deepEqual(Object.keys(result.user).sort(), ['email', 'id', 'isEmailVerified', 'nickname']);
     assert.equal(result.user.email, email);
     const storedUser = await db.user.findUniqueOrThrow({ where: { email } });
     assert.notEqual(storedUser.passwordHash, password);

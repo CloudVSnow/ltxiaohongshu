@@ -21,10 +21,26 @@ model User {
   passwordHash String
   nickname     String
   disabledAt   DateTime?
+  emailVerifiedAt DateTime?
   createdAt    DateTime  @default(now())
   sessions     Session[]
+  emailTokens  EmailToken[]
 
   @@map("users")
+}
+
+model EmailToken {
+  id        String @id @default(uuid()) @db.Uuid
+  tokenHash String @unique
+  purpose   String
+  userId    String @db.Uuid
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, purpose, createdAt])
+  @@map("email_tokens")
 }
 
 model Session {

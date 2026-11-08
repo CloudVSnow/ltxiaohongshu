@@ -2,9 +2,18 @@
 import { ref } from 'vue';
 import { onShow } from '@dcloudio/uni-app';
 import { currentAccount, restoreAccount, logout } from '../../auth';
+import { authRequest } from '../../api';
 const loading = ref(true);
 const busy = ref(false);
 const error = ref('');
+const mailMessage = ref('');
+async function sendVerification() {
+  if (busy.value) return;
+  busy.value = true; mailMessage.value = '';
+  try { await authRequest('/email/request', 'POST'); mailMessage.value = '验证邮件已发送，请查看邮箱（包括垃圾邮件）'; }
+  catch (reason) { mailMessage.value = reason instanceof Error ? reason.message : '发送失败，请重试'; }
+  finally { busy.value = false; }
+}
 async function refresh() {
   loading.value = true; error.value = '';
   try { await restoreAccount(); }
@@ -30,6 +39,9 @@ async function signOut() {
     <view v-else-if="currentAccount" class="card">
       <text class="nickname">{{ currentAccount.nickname }}</text>
       <text class="email">{{ currentAccount.email }}</text>
+      <text class="description">{{ currentAccount.isEmailVerified ? '邮箱已验证' : '邮箱尚未验证' }}</text>
+      <button v-if="!currentAccount.isEmailVerified" role="button" :disabled="busy" @click="sendVerification">发送验证邮件</button>
+      <text v-if="mailMessage" aria-live="polite" class="description">{{ mailMessage }}</text>
       <text class="description">欢迎加入社区。图文发布与个人资料编辑即将开放。</text>
       <button role="button" :disabled="busy" :loading="busy" @click="signOut">退出登录</button>
     </view>

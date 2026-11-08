@@ -11,7 +11,10 @@ export const credentialsSchema = z.object({
   password: z.string().refine(value => [...value].length >= 8 && [...value].length <= 64, '密码须为 8–64 个字符')
 }).strict();
 export type Credentials = z.infer<typeof credentialsSchema>;
-export const accountSchema = z.object({ id: z.string().uuid(), email: z.string().email(), nickname: z.string() });
+export const accountSchema = z.object({ id: z.string().uuid(), email: z.string().email(), nickname: z.string(), isEmailVerified: z.boolean() });
+export const emailSchema = z.object({ email: credentialsSchema.shape.email }).strict();
+export const emailTokenSchema = z.object({ token: z.string().regex(/^[a-f0-9]{64}$/) }).strict();
+export const resetPasswordSchema = emailTokenSchema.extend({ password: credentialsSchema.shape.password });
 export const authResponseSchema = z.object({ user: accountSchema });
 export type Account = z.infer<typeof accountSchema>;
 

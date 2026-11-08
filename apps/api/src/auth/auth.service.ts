@@ -5,7 +5,7 @@ import { DatabaseService } from '../database.service';
 import { hashPassword, verifyPassword } from './password';
 import { SESSION_DURATION, tokenHash } from './session';
 
-const account = (user: Account): Account => ({ id: user.id, email: user.email, nickname: user.nickname });
+const account = (user: { id: string; email: string; nickname: string; emailVerifiedAt: Date | null }): Account => ({ id: user.id, email: user.email, nickname: user.nickname, isEmailVerified: !!user.emailVerifiedAt });
 @Injectable()
 export class AuthService {
   private readonly dummyHash = hashPassword(randomBytes(32).toString('hex'));
@@ -38,7 +38,7 @@ export class AuthService {
       // Recheck disabled state under a row lock before issuing a session.
       await tx.$queryRaw`SELECT id FROM users WHERE id = ${user.id}::uuid FOR UPDATE`;
       const current = await tx.user.findUnique({ where: { id: user.id } });
-      if (!current || current.disabledAt) throw new UnauthorizedException('账号不可用');
+      if (!current || current.disabledAt || current.passwordHash !== user.passwordHash) throw new UnauthorizedException('账号不可用，请重新登录');
       await tx.session.deleteMany({ where: { OR: [
         { userId: user.id, expiresAt: { lte: new Date() } },
         ...(previousToken ? [{ tokenHash: tokenHash(previousToken) }] : [])

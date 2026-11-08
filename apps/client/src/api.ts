@@ -11,9 +11,11 @@ export function authRequest(path: string, method: 'GET' | 'POST' = 'GET', data?:
       if (response.statusCode >= 200 && response.statusCode < 300) { resolve(response.data); return; }
       const messages: Record<number, string> = {
         400: '请输入有效邮箱和 8–64 个字符的密码', 401: '邮箱或密码错误，或登录已失效',
-        403: '请求来源不受信任，请检查访问地址', 409: '该邮箱已注册，请切换登录', 429: '操作过于频繁，请稍后再试'
+        403: '请求来源不受信任，请检查访问地址', 409: '该邮箱已注册，请切换登录', 429: '操作过于频繁，请稍后再试', 503: '邮件发送失败，请稍后重试'
       };
-      reject(new ApiError(response.statusCode, messages[response.statusCode] ?? '服务暂不可用，请稍后重试'));
+      const message = response.statusCode === 400 && ['/email/verify', '/password/reset'].includes(path)
+        ? '链接无效、已使用或已过期，请重新申请；新密码须为 8–64 个字符' : messages[response.statusCode];
+      reject(new ApiError(response.statusCode, message ?? '服务暂不可用，请稍后重试'));
     }, fail() { reject(new ApiError(0, '连接失败，请检查网络后重试')); }
   }));
 }

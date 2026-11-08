@@ -1,6 +1,7 @@
 import { BadRequestException, Body, Controller, Get, Header, HttpCode, Inject, Post, Req, Res, UseGuards } from '@nestjs/common';
 import type { Request, Response } from 'express';
-import { credentialsSchema } from '@lt/contracts';
+import { credentialsSchema, emailSchema, emailTokenSchema, resetPasswordSchema } from '@lt/contracts';
+import { EmailService } from './email.service';
 import { AuthService } from './auth.service';
 import { AuthGuard, type AuthRequest } from './auth.guard';
 import { AuthWriteGuard } from './auth-write.guard';
@@ -13,7 +14,32 @@ function credentials(body: unknown) {
 }
 @Controller('auth')
 export class AuthController {
-  constructor(@Inject(AuthService) private readonly auth: AuthService) {}
+  constructor(@Inject(AuthService) private readonly auth: AuthService, @Inject(EmailService) private readonly email: EmailService) {}
+  @Post('email/request') @HttpCode(202) @UseGuards(AuthWriteGuard, AuthGuard)
+  async requestEmail(@Req() request: AuthRequest) {
+    await this.email.request(request.account.id, 'verify');
+    return { message: '验证邮件已发送；若已验证则无需重复操作。' };
+  }
+  @Post('email/verify') @HttpCode(200) @UseGuards(AuthWriteGuard)
+  verifyEmail(@Body() body: unknown) {
+    const parsed = emailTokenSchema.safeParse(body);
+    if (!parsed.success) throw new BadRequestException('链接无效或已过期，请重新发送');
+    return this.email.consume(parsed.data.token, 'verify');
+  }
+  @Post('password/forgot') @HttpCode(202) @UseGuards(AuthWriteGuard)
+  forgot(@Body() body: unknown) {
+    const parsed = emailSchema.safeParse(body);
+    if (!parsed.success) throw new BadRequestException('请输入有效邮箱');
+    return this.email.forgot(parsed.data.email);
+  }
+  @Post('password/reset') @HttpCode(200) @UseGuards(AuthWriteGuard)
+  async reset(@Body() body: unknown, @Res({ passthrough: true }) response: Response) {
+    const parsed = resetPasswordSchema.safeParse(body);
+    if (!parsed.success) throw new BadRequestException('请输入有效链接和 8–64 个字符的密码');
+    const result = await this.email.consume(parsed.data.token, 'reset', parsed.data.password);
+    response.clearCookie(SESSION_COOKIE, sessionCookieOptions());
+    return result;
+  }
   @Post('register') @UseGuards(AuthWriteGuard) @Header('Cache-Control', 'no-store')
   async register(@Body() body: unknown, @Req() request: Request, @Res({ passthrough: true }) response: Response) {
     const result = await this.auth.register(credentials(body), readSessionCookie(request.headers.cookie));

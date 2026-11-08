@@ -16,6 +16,7 @@ function toggle() {
   password.value = '';
   error.value = '';
 }
+function forgot() { uni.navigateTo({ url: '/pages/email/index?mode=forgot' }); }
 async function submit() {
   if (busy.value) return;
   error.value = '';
@@ -43,8 +44,9 @@ async function submit() {
       <text v-if="error" role="alert" class="error">{{ error }}</text>
       <button role="button" class="primary" :disabled="busy" :loading="busy" @click="submit">{{ mode === 'login' ? '登录' : '注册并登录' }}</button>
       <button role="button" class="secondary" :disabled="busy" @click="toggle">{{ mode === 'login' ? '没有账号？去注册' : '已有账号？去登录' }}</button>
+      <button v-if="mode === 'login'" role="button" class="secondary" :disabled="busy" @click="forgot">忘记密码</button>
     </view>
-    <text class="notice">当前为内部测试版，邮箱暂未验证；邮件验证与密码找回将在公开注册前提供。</text>
+    <text class="notice">注册后可在「我的」发送验证邮件，确认邮箱归属。</text>
   </view>
 </template>
 <style scoped>

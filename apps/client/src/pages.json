@@ -2,7 +2,8 @@
   "pages": [
     { "path": "pages/discover/index", "style": { "navigationBarTitleText": "图文社区" } },
     { "path": "pages/auth/index", "style": { "navigationBarTitleText": "登录注册" } },
-    { "path": "pages/me/index", "style": { "navigationBarTitleText": "我的" } }
+    { "path": "pages/me/index", "style": { "navigationBarTitleText": "我的" } },
+    { "path": "pages/email/index", "style": { "navigationBarTitleText": "邮箱与密码" } }
   ],
   "globalStyle": { "navigationBarTextStyle": "black", "navigationBarBackgroundColor": "#faf8f5", "backgroundColor": "#faf8f5" }
 }
