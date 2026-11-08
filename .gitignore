@@ -1,0 +1,48 @@
+# Dependencies and package manager caches (keep lockfiles tracked)
+node_modules/
+.pnpm-store/
+.npm/
+
+# Build output: uni-app, H5 and NestJS
+dist/
+unpackage/
+.hbuilderx/
+.vite/
+.cache/
+*.tsbuildinfo
+
+# Test and coverage output
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+
+# Local environment and credentials (keep documented examples)
+.env
+.env.*
+!.env.example
+!.env.*.example
+!.env.sample
+!.env.template
+*.p12
+*.pfx
+*.mobileprovision
+
+# Runtime logs and local uploads
+logs/
+*.log
+*.pid
+/uploads/
+
+# Editor and operating system files
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+Desktop.ini
